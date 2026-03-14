@@ -1,0 +1,24 @@
+FROM jenkins/jenkins:lts
+
+USER root
+
+# Install base tools + docker
+RUN apt-get update && apt-get install -y \
+    docker.io \
+    wget \
+    unzip \
+    curl
+
+# Install Terraform
+RUN wget https://releases.hashicorp.com/terraform/1.8.5/terraform_1.8.5_linux_amd64.zip \
+    && unzip terraform_1.8.5_linux_amd64.zip \
+    && mv terraform /usr/local/bin/ \
+    && rm terraform_1.8.5_linux_amd64.zip
+
+# Install Trivy (binary install — avoids Debian repo issues)
+RUN wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.69.3_Linux-64bit.tar.gz \
+    && tar zxvf trivy_0.69.3_Linux-64bit.tar.gz \
+    && mv trivy /usr/local/bin/ \
+    && rm trivy_0.69.3_Linux-64bit.tar.gz
+
+USER jenkins
